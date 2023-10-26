@@ -1,8 +1,23 @@
 name: Reusable Deploy
-on: workflow_call # allow this workflow to be called by other
+#on: workflow_call # allow this workflow to be called by other
+on:
+  workflow_call:
+    inputs:
+      artifact-name:
+        description: The name of the deployable artifact files
+        required: false
+        default: dist
+        type: string
 jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
+      - name: Get Code
+        uses: actions/download-artifact@v3
+        with:
+          #name: dist-files # If we hardcode the name, this workflow will not be reusable anymore, because it only searchs filenames called 'dist-files'
+          name: ${{ inputs.artifact-name }}
+      - name: List files
+        run: ls
       - name: Output Information
         run: echo "Deploying & Uploading...."
